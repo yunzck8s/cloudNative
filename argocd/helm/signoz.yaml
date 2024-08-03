@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: signoz
+  namespace: argocd
+spec:
+  project: default
+  source:
+    path: values
+    repoURL: https://github.com/yunzck8s/cloudNative.git
+    targetRevision: main
+    helm:
+      releaseName: signoz
+      valueFiles:
+        - signoz.yaml
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: platform
+  syncPolicy:
+    automated:
+      prune: true
