@@ -1464,7 +1464,7 @@ otelCollector:
 
   minReadySeconds: 5
   progressDeadlineSeconds: 120
-  replicaCount: 1
+  replicaCount: 3
 
   # OtelCollector RBAC config
   clusterRole:
