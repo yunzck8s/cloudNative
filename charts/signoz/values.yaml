@@ -1846,7 +1846,7 @@ otelCollector:
       # Batch processor config.
       # ref: https://github.com/open-telemetry/opentelemetry-collector/blob/main/processor/batchprocessor/README.md
       batch:
-        send_batch_size: 50000
+        send_batch_size: 100000
         timeout: 1s
       # Resource detection processor config.
       # ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/resourcedetectionprocessor/README.md
@@ -1976,6 +1976,8 @@ otelCollector:
       clickhouselogsexporter:
         dsn: tcp://${CLICKHOUSE_USER}:${CLICKHOUSE_PASSWORD}@${CLICKHOUSE_HOST}:${CLICKHOUSE_PORT}/${CLICKHOUSE_LOG_DATABASE}
         timeout: 10s
+        sending_queue:
+          queue_size: 100000
       prometheus:
         endpoint: 0.0.0.0:8889
     service:
