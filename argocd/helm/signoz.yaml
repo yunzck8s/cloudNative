@@ -6,13 +6,13 @@ metadata:
 spec:
   project: default
   source:
-    path: values
+    path: charts/signoz
     repoURL: https://github.com/yunzck8s/cloudNative.git
     targetRevision: main
     helm:
       releaseName: signoz
       valueFiles:
-        - signoz.yaml
+        - values.yaml
   destination:
     server: "https://kubernetes.default.svc"
     namespace: platform
