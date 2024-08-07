@@ -245,11 +245,11 @@ loki:
       cache_location: /var/loki/cache
       cache_ttl: 168h
     aws:
-      s3: http://minio.prometheus.svc.cluster.local:9000
+      s3: http://minio-loki.prometheus.svc.cluster.local:9000
       insecure: true
       bucketnames: loki-data
       access_key_id: admin
-      secret_access_key: ouhHDfRG1q
+      secret_access_key: Y0ndfFGsko
       s3forcepathstyle: true
 #    filesystem:
 #      directory: /var/loki/chunks
