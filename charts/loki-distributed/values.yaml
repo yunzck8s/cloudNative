@@ -249,7 +249,7 @@ loki:
       insecure: true
       bucketnames: loki-data
       access_key_id: admin
-      secret_access_key: Y0ndfFGsko
+      secret_access_key: 2pdlTh7zaV
       s3forcepathstyle: true
 #    filesystem:
 #      directory: /var/loki/chunks
