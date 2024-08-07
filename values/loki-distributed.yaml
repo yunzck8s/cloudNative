@@ -1134,7 +1134,7 @@ gateway:
     # -- Port of the gateway service
     port: 80
     # -- Type of the gateway service
-    type: NodePort
+    type: ClusterIP
     # -- ClusterIP of the gateway service
     clusterIP: null
     # -- Node port if service type is NodePort
