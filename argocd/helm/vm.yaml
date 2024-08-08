@@ -11,8 +11,6 @@ spec:
     targetRevision: main
     helm:
       releaseName: victoria-metrics-operator
-      valueFiles:
-        - ../../values/vm.yaml
   destination:
     server: "https://kubernetes.default.svc"
     namespace: prometheus
