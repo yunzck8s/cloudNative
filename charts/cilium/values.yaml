@@ -734,7 +734,7 @@ ciliumEndpointSlice:
 envoyConfig:
   # -- Enable CiliumEnvoyConfig CRD
   # CiliumEnvoyConfig CRD can also be implicitly enabled by other options.
-  enabled: false
+  enabled: true
   # -- SecretsNamespace is the namespace in which envoy SDS will retrieve secrets from.
   secretsNamespace:
     # -- Create secrets namespace for CiliumEnvoyConfig CRDs.
@@ -746,10 +746,10 @@ envoyConfig:
 ingressController:
   # -- Enable cilium ingress controller
   # This will automatically set enable-envoy-config as well.
-  enabled: false
+  enabled: true
   # -- Set cilium ingress controller to be the default ingress controller
   # This will let cilium ingress controller route entries without ingress class set
-  default: false
+  default: true
   # -- Default ingress load balancer mode
   # Supported values: shared, dedicated
   # For granular control, use the following annotations on the ingress resource:
