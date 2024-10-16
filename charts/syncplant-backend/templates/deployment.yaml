@@ -1,0 +1,106 @@
+{{- range $name, $options := .Values.backend }}
+{{- $imageTag := $options.image.tag | default $.Values.image.tag }}
+{{- $port := $.Values.port }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name | kebabcase }}
+  labels:
+    app: {{ $name | kebabcase }}
+spec:
+  replicas: {{ $options.replicaCount }} #运行容器的副本数，修改这里可以快速修改分布式节点数量
+  selector:
+    matchLabels:
+      app: {{ $name | kebabcase }}
+  template:
+    metadata:
+      annotations:
+        sidecar.opentelemetry.io/inject: "true"
+        instrumentation.opentelemetry.io/inject-java: "true"
+      labels:
+        app: {{ $name | kebabcase }}
+    spec:
+{{- if $.Values.syncplant.skywalking.enabled }}
+      #构建初始化镜像(通过初始化镜像的方式集成SkyWalking Agent)
+      initContainers:
+        - image: "{{ $.Values.syncplant.skywalking.image.repository }}:{{ $.Values.syncplant.skywalking.image.tag }}"
+          name: syncplant-sidecar
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh"]
+          args:
+            [
+              "-c",
+              "cp -r /skywalking/agent/* /agent",
+            ]
+          volumeMounts:
+            - mountPath: /agent
+              name: skywalking-agent
+{{- end }}
+      containers:
+        - name: {{ $name | kebabcase }}
+          imagePullPolicy: IfNotPresent
+          image: "{{ $options.image.repository }}:{{ $imageTag }}"
+          livenessProbe:
+            tcpSocket:
+              port: {{ $port }}
+            initialDelaySeconds: {{ $.Values.livenessProbe.initialDelaySeconds }} #延迟探测时间
+            timeoutSeconds: 3 #超时时间
+            periodSeconds: 10 #重试时间间隔
+            failureThreshold: 5 #探针失败重试次数
+          readinessProbe:
+            tcpSocket:
+              port: {{ $port }}
+            initialDelaySeconds: {{ $.Values.readinessProbe.initialDelaySeconds }} #延迟探测时间
+            timeoutSeconds: 3 #超时时间
+            periodSeconds: 10 #重试时间间隔
+            failureThreshold: 5 #探针失败重试次数
+          ports:
+            - name: http
+              containerPort: {{ $port }}
+          env:
+            - name: TZ
+              value: Asia/Shanghai
+            - name: APP_NAME
+              value: {{ $name | kebabcase }}
+{{- if $.Values.syncplant.javaOpts }}
+            - name: JAVA_OPTS
+              value: {{ $.Values.syncplant.javaOpts }}
+{{- end }}
+            - name: ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: syncplant-cm
+                  key: env
+            - name: NACOS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: syncplant-cm
+                  key: nacos.url
+            - name: NACOS_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: syncplant-cm
+                  key: nacos.user
+            - name: NACOS_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: syncplant-cm
+                  key: nacos.password
+{{- if $.Values.syncplant.skywalking.enabled }}
+            #这里通过JAVA_TOOL_OPTIONS,该参数
+            - name: JAVA_TOOL_OPTIONS
+              value: -javaagent:/skywalking/agent/skywalking-agent.jar
+            - name: SW_AGENT_NAME
+              value: {{ $name }}
+            - name: SW_AGENT_COLLECTOR_BACKEND_SERVICES
+               # FQDN: servicename.namespacename.svc.cluster.local
+              value: {{ $.Values.syncplant.skywalking.backendServices }}
+          volumeMounts:
+            - mountPath: /skywalking/agent
+              name: skywalking-agent
+      volumes:
+        - name: skywalking-agent
+          emptyDir: {}
+{{- end }}
+{{ end }}

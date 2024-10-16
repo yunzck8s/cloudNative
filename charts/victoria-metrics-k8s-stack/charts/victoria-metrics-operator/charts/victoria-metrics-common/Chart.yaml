@@ -1,0 +1,31 @@
+annotations:
+  artifacthub.io/category: monitoring-logging
+  artifacthub.io/changes: |
+    - Allow `appKey` argument to be a list to support deeply nested objects
+    - Added `vm.namespace`, which returns `namespaceOverride` or `global.namespaceOverride` or `Release.Namespace` as a default
+    - Added `vm.managed.fullname`, which returns default fullname prefixed by `appKey`
+    - Added `vm.plain.fullname`, which returns default fullname suffixed by `appKey`
+  artifacthub.io/license: Apache-2.0
+  artifacthub.io/links: |
+    - name: Sources
+      url: https://github.com/VictoriaMetrics/helm-charts
+    - name: Charts repo
+      url: https://victoriametrics.github.io/helm-charts/
+apiVersion: v2
+description: Victoria Metrics Common - contains shared templates for all Victoria
+  Metrics helm charts
+keywords:
+- victoriametrics
+- monitoring
+- kubernetes
+- observability
+- tsdb
+- metrics
+- metricsql
+- timeseries
+kubeVersion: '>=1.23.0-0'
+name: victoria-metrics-common
+sources:
+- https://github.com/VictoriaMetrics/helm-charts
+type: library
+version: 0.0.9

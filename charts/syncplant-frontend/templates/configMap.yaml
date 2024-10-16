@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: syncplant-web-configmap
+data:
+  nginx_conf: |-
+    # 开启gzip压缩;
+    gzip on;
+    gzip_min_length 1k;
+    gzip_comp_level 6;
+    gzip_types text/plain application/javascript application/x-javascript application/xml text/javascript text/xml text/css;
+    gzip_vary on;
+    gzip_disable "MSIE [1-6].";
+
+    upstream backend{
+        server gateway-hs.syncplant-backend;
+    }
+
+    server {
+        listen       80;
+        server_name  localhost;
+
+        #charset koi8-r;
+        #access_log  /var/log/nginx/host.access.log  main;
+
+        location / {
+            root   /usr/share/nginx/html;
+            index  index.html index.htm;
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+
+
+     location /mainApi/ {
+       add_header Access-Control-Allow-Origin *;
+       add_header Access-Control-Allow-Methods 'GET, POST, OPTIONS';
+       add_header Access-Control-Allow-Headers 'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization';
+       # nginx跟后端服务器连接超时时间
+       proxy_connect_timeout 300;
+       # 后端服务器数据回传超时时间
+       proxy_send_timeout 300;
+    
+       # 连接成功后，后端服务器响应超时时间
+       proxy_read_timeout 300;
+       proxy_max_temp_file_size 1024m;
+       #文件上传大小
+       client_max_body_size    1024m;
+       proxy_set_header host $http_host;
+       proxy_set_header X-Real-IP      $remote_addr;
+       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+       proxy_http_version 1.1;
+       proxy_set_header Upgrade $http_upgrade;
+       proxy_set_header Connection 'upgrade';
+       proxy_pass http://backend/;
+     }
+     location  /ossProxy/ {
+       proxy_pass http://minio.middle:9000/;
+     }
+     location  /frontend/ {
+       proxy_pass http://127.0.0.1:80/;
+     }
+
+    }

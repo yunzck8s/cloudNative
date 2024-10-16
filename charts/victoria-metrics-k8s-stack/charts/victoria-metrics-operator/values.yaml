@@ -1,0 +1,248 @@
+global:
+  image:
+    registry: ""
+  imagePullSecrets: []
+  cluster:
+    dnsDomain: cluster.local
+# Default values for victoria-metrics.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+# -- operator image configuration
+image:
+  # -- Image registry
+  registry: ""
+  # -- Image repository
+  repository: victoriametrics/operator
+  # -- Image tag
+  # override Chart.AppVersion
+  tag: ""
+  # Variant of the image to use.
+  # e.g. scratch
+  variant: ""
+  # -- Image pull policy
+  pullPolicy: IfNotPresent
+
+crd:
+  # -- enables CRD creation and management.
+  # -- with this option, if you remove this chart, all crd resources will be deleted with it.
+  create: true
+  cleanup:
+    # -- Tells helm to clean up all the vm resources under this release's namespace when uninstalling
+    enabled: false
+    # -- Image configuration for CRD cleanup Job
+    image:
+      repository: bitnami/kubectl
+      # use image tag that matches k8s API version by default
+      tag: ""
+      pullPolicy: IfNotPresent
+    
+replicaCount: 1
+
+# -- Secret to pull images
+imagePullSecrets: []
+
+# -- VM operatror deployment name override
+nameOverride: ""
+
+# -- Overrides the full name of server component
+fullnameOverride: ""
+
+# -- VM operator log level
+# -- possible values: info and error.
+logLevel: "info"
+
+rbac:
+  # -- Specifies whether the RBAC resources should be created
+  create: true
+  # -- create aggregated clusterRoles for CRD readonly and admin permissions
+  aggregatedClusterRoles:
+    enabled: true
+    # -- labels attached to according clusterRole
+    labels:
+      view:
+        rbac.authorization.k8s.io/aggregate-to-view: "true"
+      admin:
+        rbac.authorization.k8s.io/aggregate-to-admin: "true"
+
+# -- Labels to be added to the all resources
+extraLabels: {}
+# extra Labels for Pods only
+podLabels: {}
+# -- Annotations to be added to the all resources
+annotations: {}
+
+podSecurityContext: {}
+securityContext: {}
+
+operator:
+  # -- By default, operator converts prometheus-operator objects.
+  disable_prometheus_converter: false
+  # -- Compare-options and sync-options for prometheus objects converted by operator for properly use with ArgoCD
+  prometheus_converter_add_argocd_ignore_annotations: false
+  # -- Enables ownership reference for converted prometheus-operator objects,
+  # it will remove corresponding victoria-metrics objects in case of deletion prometheus one.
+  enable_converter_ownership: false
+  # -- Enables custom config-reloader, bundled with operator.
+  # It should reduce  vmagent and vmauth config sync-time and make it predictable.
+  useCustomConfigReloader: false
+
+# -- By default, the operator will watch all the namespaces
+# If you want to override this behavior, specify the namespace.
+# Operator supports multiple namespaces for watching.
+watchNamespaces: []
+
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  create: true
+  # -- The name of the service account to use. If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+service:
+  annotations: {}
+  labels: {}
+  clusterIP: ""
+  externalIPs: ""
+  loadBalancerIP: ""
+  loadBalancerSourceRanges: []
+  type: ClusterIP
+  healthCheckNodePort: ""
+  externalTrafficPolicy: ""
+  ipFamilyPolicy: ""
+  ipFamilies: []
+
+# -- See `kubectl explain poddisruptionbudget.spec` for more or check [these docs](https://kubernetes.io/docs/tasks/run-application/configure-pdb/)
+podDisruptionBudget:
+  enabled: false
+  # minAvailable: 1
+  # maxUnavailable: 1
+  labels: {}
+
+# -- Resource object
+resources:
+  {}
+  # limits:
+  #   cpu: 120m
+  #   memory: 320Mi
+  # requests:
+  #   cpu: 80m
+  #   memory: 120Mi
+
+# -- Pod's node selector. Details are [here](https://kubernetes.io/docs/user-guide/node-selection/)
+nodeSelector: {}
+
+# -- Array of tolerations object. Spec is [here](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/)
+tolerations: []
+
+# -- Pod affinity
+affinity: {}
+
+# -- Pod Topology Spread Constraints. Spec is [here](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/)
+topologySpreadConstraints: []
+
+# -- operator container additional commandline arguments
+extraArgs: {}
+
+# -- extra settings for the operator deployment. Full list [here](https://docs.victoriametrics.com/operator/vars)
+env:
+  []
+  # - name: VM_VMSINGLEDEFAULT_VERSION
+  #   value: v1.43.0
+
+envFrom:
+  []
+  #- configMapRef:
+  #    name: special-config
+
+# -- Additional hostPath mounts
+extraHostPathMounts:
+  []
+  # - name: certs-dir
+  #   mountPath: /etc/kubernetes/certs
+  #   subPath: ""
+  #   hostPath: /etc/kubernetes/certs
+#   readOnly: true
+
+# -- Extra Volumes for the pod
+extraVolumes:
+  []
+  # - name: example
+  #   configMap:
+  #     name: example
+
+# -- Extra Volume Mounts for the container
+extraVolumeMounts:
+  []
+  # - name: example
+  #   mountPath: /example
+
+extraContainers:
+  []
+  # - name: config-reloader
+  #   image: reloader-image
+
+# -- Configures resource validation
+admissionWebhooks:
+  # -- Enables validation webhook.
+  enabled: true
+  enabledCRDValidation:
+    vmagent: true
+    vmalert: true
+    vmsingle: true
+    vmauth: true
+    vmrule: true
+    vmalertmanagerconfig: true
+    vmalertmanager: true
+    vmcluster: true
+    vmuser: true
+    vlogs: true
+  # -- What to do in case, when operator not available to validate request.
+  policy: Fail
+  # -- Enables custom ca bundle, if you are not using cert-manager.
+  # -- in case of custom ca, you have to create secret - {chart-name}-validation
+  # -- with keys: tls.key, tls.crt, ca.crt
+  certManager:
+    # -- Enables cert creation and injection by cert-manager.
+    enabled: false
+    # --If needed, provide own issuer. Operator will create self-signed if empty.
+    issuer: {}
+  keepTLSSecret: true
+  # tls specifies TLS cert/key for the webhook
+  tls:
+    caCert:
+    cert:
+    key:
+
+# -- configures monitoring with serviceScrape. VMServiceScrape must be pre-installed
+serviceMonitor:
+  enabled: false
+  extraLabels: {}
+  annotations: {}
+  relabelings: []
+  scheme: ""
+  interval: ""
+  scrapeTimeout: ""
+  tlsConfig: {}
+  basicAuth: {}
+
+probe:
+  # -- Readiness probe
+  readiness:
+    httpGet:
+      port: probe
+    initialDelaySeconds: 5
+    periodSeconds: 15
+    timeoutSeconds: 5
+    failureThreshold: 3
+  # -- Liveness probe
+  liveness:
+    tcpSocket:
+      port: probe
+    initialDelaySeconds: 5
+    periodSeconds: 15
+    timeoutSeconds: 5
+    failureThreshold: 3
+  # -- Startup probe
+  startup: {}
+
+# -- Add extra specs dynamically to this chart
+extraObjects: []

@@ -1,0 +1,59 @@
+# Default values for syncplant-backend.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+#部署pod个数
+replicaCount: 1
+
+port: 80
+
+image:
+  tag: 1.4.19.11
+
+configmap: false
+
+frontend:
+  syncplant-web:
+    replicaCount: 1
+    configmap: true
+    image: 
+      repository: rzx.sciyon.com:11243/syncplant/syncplant-web
+      tag: 
+
+
+service:
+  syncplant-web:
+    type: NodePort
+    port: 80
+    nodePort: 30010
+
+
+
+
+#镜像拉取secrets
+imagePullSecrets: "harbor-secret"
+
+nameOverride: ""
+
+
+resources:
+  limits:
+      memory: 256Mi
+  requests:
+      memory: 256Mi
+  
+
+##后端service的地址
+backend: gateway-hs.syncplant-backend
+
+#microApps:
+#  sisApp: "sis-web-hs"
+#  opsApp: "ops-web-hs"
+
+persistence:
+  ## @param persistence.enabled Enable MinIO&reg; data persistence using PVC. If false, use emptyDir
+  ##
+  enabled: false
+  size: 20Gi
+  className: managed-nfs-storage
+

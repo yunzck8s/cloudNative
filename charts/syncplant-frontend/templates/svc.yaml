@@ -1,0 +1,20 @@
+{{- range $name, $options := .Values.service }}
+{{- $port := $.Values.port }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name | kebabcase }}-svc
+spec:
+  type: {{ $options.type }}
+  ports:
+    - port: {{ $port }}
+      targetPort: {{ $port }}
+      protocol: TCP
+      name: http
+      {{- if eq $options.type "NodePort" }}
+      nodePort: {{ $options.nodePort }}
+      {{- end }}
+  selector:
+    app: {{ $name | kebabcase }}
+{{- end }}

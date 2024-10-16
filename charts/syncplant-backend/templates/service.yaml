@@ -1,0 +1,13 @@
+{{- $port := $.Values.port }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-hs
+spec:
+  ports:
+    - port: 80
+      targetPort: {{ $port }} 
+      protocol: TCP
+      name: http
+  selector:
+    app: syncplant-frame-gateway

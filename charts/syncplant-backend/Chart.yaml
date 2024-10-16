@@ -1,0 +1,12 @@
+apiVersion: v1
+appVersion: 1.2.0
+description: backend是syncplant微服务后端的helm部署脚本。
+home: https://sciyon.com
+icon: file://../img/favicon.ico
+keywords:
+  - syncplant
+maintainers:
+  - email: wangc@sciyon.com
+    name: wangchao
+name: syncplant-backend
+version: 1.1.7

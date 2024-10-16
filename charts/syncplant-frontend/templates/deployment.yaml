@@ -1,0 +1,94 @@
+{{- range $name, $options := .Values.frontend }}
+{{- $imageTag := $options.image.tag | default $.Values.image.tag }}
+{{- $port := $.Values.port }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name | kebabcase }}
+  labels:
+    app: {{ $name | kebabcase }}
+spec:
+  replicas: {{ $options.replicaCount }} #运行容器的副本数，修改这里可以快速修改分布式节点数量
+  selector:
+    matchLabels:
+      app: {{ $name | kebabcase }}
+  template:
+    metadata:
+      labels:
+        app: {{ $name | kebabcase }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configMap.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: {{ $name | kebabcase }}
+          imagePullPolicy: {{ $.Values.image.pullPolicy | quote }}
+          image: "{{ $options.image.repository }}:{{ $imageTag }}"
+          resources: {{ toYaml $.Values.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              port: 80
+              path: /index.html
+            initialDelaySeconds: 30 #延迟探测时间
+            timeoutSeconds: 2 #超时时间
+            periodSeconds: 5 #重试时间间隔
+            failureThreshold: 3 #探针失败重试次数
+          readinessProbe:
+            httpGet:
+              port: 80
+              path: /index.html
+            initialDelaySeconds: 15 #延迟探测时间
+            timeoutSeconds: 2 #超时时间
+            periodSeconds: 3 #重试时间间隔
+            failureThreshold: 3 #探针失败重试次数
+          ports:
+            - name: http
+              containerPort: 80
+          env:
+            - name: TZ
+              value: Asia/Shanghai
+          volumeMounts:
+{{- if eq $name "syncplant-system-formdesign" }}
+            - mountPath: /etc/nginx/conf.d/default.conf
+              name: nginx
+              subPath: default.conf
+{{- end }}
+{{- if $options.configmap | default $.Values.configmap}}
+            - mountPath: /etc/nginx/conf.d/default.conf
+              name: nginx
+              subPath: default.conf
+{{- end }}
+{{- if $.Values.persistence.enabled  }}
+            - name: data-B3dm
+              mountPath: /usr/share/nginx/html/static/ISMAP/SyncGis/B3dm/DY
+              subPath: DY
+            - name: data-custom
+              mountPath: /usr/share/nginx/html/static/default_custom
+              subPath: default_custom
+{{- end }}
+      volumes:
+{{- if eq $name "syncplant-system-formdesign" }}
+        - name: nginx
+          configMap:
+            name: syncplant-form-configmap
+            items:
+              - key: nginx_conf
+                path: default.conf
+{{- end }}
+{{- if $options.configmap | default $.Values.configmap}}
+        - name: nginx
+          configMap:
+            name: syncplant-web-configmap
+            items:
+              - key: nginx_conf
+                path: default.conf
+{{- end }}
+{{- if $.Values.persistence.enabled  }}
+        - name: data-B3dm
+          persistentVolumeClaim:
+            claimName: B3dm
+        - name: data-custom
+          persistentVolumeClaim:
+            claimName: default_custom
+{{- end }}
+{{- end }}

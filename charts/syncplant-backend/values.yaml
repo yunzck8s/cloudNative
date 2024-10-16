@@ -1,0 +1,78 @@
+# Default values for syncplant-backend.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image:
+  tag: 1.4.19.11
+
+port: 8080
+
+backend:
+  syncplant-system-resource:
+    replicaCount: 1
+    image: 
+      repository: rzx.sciyon.com:11243/syncplant/syncplant-system-resource
+      tag: 
+  syncplant-frame-auth:
+    replicaCount: 1
+    image: 
+      repository: rzx.sciyon.com:11243/syncplant/syncplant-frame-auth
+      tag: 
+  syncplant-system-log:
+    replicaCount: 1
+    image: 
+      repository: rzx.sciyon.com:11243/syncplant/syncplant-system-log
+      tag: 
+  syncplant-system-pf:
+    replicaCount: 1
+    image: 
+      repository: rzx.sciyon.com:11243/syncplant/syncplant-system-pf
+      tag: 
+  syncplant-frame-gateway:
+    replicaCount: 1
+    image: 
+      repository: rzx.sciyon.com:11243/syncplant/syncplant-frame-gateway
+      tag: 
+
+
+
+nameOverride: ""
+
+##就绪探针
+readinessProbe:
+  initialDelaySeconds: 60
+
+##存活探针
+livenessProbe:
+  initialDelaySeconds: 90
+
+
+
+
+#syncplant微服务相关参数配置
+syncplant:
+  # jvm启动参数
+  javaOpts: ""
+  # 该configMap中记录微服务的通用功能培新信息，如nacos的配置等
+  configMap:
+    autoCreate: true
+    env: prod
+    nacos:
+      url: nacos-0.nacos-hs.middle.svc.cluster.local:8848,nacos-1.nacos-hs.middle.svc.cluster.local:8848,nacos-2.nacos-hs.middle.svc.cluster.local:8848
+      user: nacos
+      password: nacos
+      service: 
+  #是否需要启用skywalking
+  skywalking:
+    enabled: false
+    backendServices: skywalking-oap.prometheus.svc.cluster.local:11800
+    image:
+      repository: 10.44.2.51/syncplant/skywalking-agent
+      pullPolicy: IfNotPresent
+      tag: "8.14.0"
+
+
+
+
+
+

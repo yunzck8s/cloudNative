@@ -1,0 +1,13 @@
+{{- if .Values.syncplant.configMap.autoCreate }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: syncplant-cm
+data:
+  {{- with .Values.syncplant.configMap }}
+  env: {{ .env }}
+  nacos.url: {{ .nacos.url }}
+  nacos.user: {{ .nacos.user }}
+  nacos.password: {{ .nacos.password }}
+  {{- end }}
+{{- end }}

@@ -2,7 +2,7 @@ apiVersion: opentelemetry.io/v1alpha1
 kind: Instrumentation
 metadata:
   name: my-instrumentation
-  namespace: hotcommerce
+  namespace: syncplant-backend
 spec:
   propagators:
     - tracecontext

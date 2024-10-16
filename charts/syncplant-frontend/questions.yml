@@ -1,0 +1,103 @@
+labels:
+  io.cattle.role: project # options are cluster/project
+categories:
+- syncplant
+questions:
+- variable: nameOverride
+  description: "微应用的名称"
+  label: 微应用的名称
+  type: string
+  required: true
+  group: "通用参数配置"
+- variable: replicaCount
+  default: 2
+  description: "syncplant微应用在k8s中实例数"
+  label: syncplant pod数量
+  type: int
+  group: "通用参数配置"
+- variable: defaultImage
+  default: false
+  description: "使用默认的镜像"
+  label: 使用默认镜像
+  type: boolean
+  group: "通用参数配置"
+  show_subquestion_if: false
+  subquestions:
+    - variable: image.repository
+      default: ""
+      description: "syncplant微应用镜像"
+      type: string
+      label: 微应用镜像
+      required: true
+    - variable: image.tag
+      default: ""
+      description: "syncplant前端镜像Tag"
+      type: string
+      label: 镜像Tag
+      required: true
+    - variable: image.pullPolicy
+      default: "IfNotPresent"
+      description: "镜像拉取策略"
+      type: enum
+      label: 镜像拉取策略
+      options:
+        - "IfNotPresent"
+        - "Always"
+- variable: enableImagePullSecrets
+  default: false
+  description: "镜像拉取secret"
+  label: 镜像拉取secret
+  type: boolean
+  group: "通用参数配置"
+  show_subquestion_if: true
+  subquestions:
+    - variable: imagePullSecrets
+      default: "harbor-secret"
+      description: "镜像拉取secret"
+      type: string
+      label: 镜像拉取secret
+- variable: defaultResources
+  default: true
+  description: "前端启动对CPU和内存的限制"
+  label: pod cpu内存资源
+  type: boolean
+  group: "通用参数配置"
+  show_subquestion_if: false
+  subquestions:
+    - variable: resources.requests.cpu
+      default: "80m"
+      description: "pod需要的cpu"
+      type: string
+      label: pod需要的cpu
+    - variable: resources.requests.memory
+      default: "128Mi"
+      description: "pod需要的cpu"
+      type: string
+      label: pod需要的cpu
+
+- variable: service.type
+  default: "ClusterIP"
+  description: "前端服务类型，NodePort或者ClusterIP"
+  type: enum
+  label: 前端服务类型
+  options:
+    - "ClusterIP"
+    - "NodePort"
+  group: "通用参数配置"
+  show_subquestion_if: "NodePort"
+  subquestions:
+    - variable: service.nodePort
+      default: 30010
+      description: "前端服务NodePort端口号"
+      type: int
+      required: true
+      label: NodePort端口号
+
+- variable: backend
+  default: "gateway-hs.syncplant-backend:80"
+  description: "微服务网关地址如：gateway-hs.syncplant-backend"
+  label: 微服务网关地址
+  type: string
+  required: true
+  group: "通用参数配置"
+

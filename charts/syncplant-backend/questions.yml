@@ -1,0 +1,176 @@
+labels:
+  io.cattle.role: project # options are cluster/project
+categories:
+- syncplant
+questions:
+- variable: nameOverride
+  description: ""
+  label: 微服务的名称
+  type: string
+  required: true
+  group: "通用参数配置"
+- variable: replicaCount
+  default: 1
+  description: "syncplant微服务在k8s中副本数"
+  label: syncplant pod数量
+  type: int
+  group: "通用参数配置"
+- variable: defaultImage
+  default: false
+  description: "使用默认的镜像"
+  label: 使用默认镜像
+  type: boolean
+  group: "通用参数配置"
+  show_subquestion_if: false
+  subquestions:
+    - variable: image.repository
+      default: ""
+      description: "syncplant微服务镜像"
+      type: string
+      label: 微服务镜像
+      required: true
+    - variable: image.tag
+      default: ""
+      description: "微服务镜像Tag"
+      type: string
+      label: 镜像Tag
+      required: true
+    - variable: image.pullPolicy
+      default: "IfNotPresent"
+      description: "镜像拉取策略"
+      type: enum
+      label: 镜像拉取策略
+      options:
+        - "IfNotPresent"
+        - "Always"
+- variable: enableImagePullSecrets
+  default: true
+  description: "是否启用镜像拉取secret"
+  label: 镜像拉取secret
+  type: boolean
+  group: "通用参数配置"
+  show_subquestion_if: true
+  subquestions:
+    - variable: imagePullSecrets
+      default: "harbor_secret"
+      description: "拉取harbor库镜像的secret，需要提前设置secret"
+      type: string
+      label: 镜像拉取secret
+- variable: defaultResources
+  default: true
+  description: "syncplant微服务启动对CPU和内存的限制"
+  label: syncplant微服务cpu内存资源
+  type: boolean
+  group: "通用参数配置"
+  show_subquestion_if: false
+  subquestions:
+    - variable: resources.requests.cpu
+      default: "200m"
+      description: "pod需要的cpu"
+      type: string
+      label: pod需要的cpu
+    - variable: resources.requests.memory
+      default: "256Mi"
+      description: "pod需要的cpu"
+      type: string
+      label: pod需要的cpu
+- variable: readinessProbe.initialDelaySeconds
+  default: 60
+  description: "syncplant微服务就绪探针延时探测时间,单位秒"
+  label: 就绪探针延时探测时间
+  type: int
+  group: "通用参数配置"
+- variable: livenessProbe.initialDelaySeconds
+  default: 90
+  description: "syncplant微服务存活探针延时探测时间,单位秒"
+  label: 存活探针延时探测时间
+  type: int
+  group: "通用参数配置"
+##syncplant自定义参数配置
+- variable: syncplant.isGateway
+  default: false
+  description: "是否为微服务的网关，如果是微服务网关将自动创建ClusterIP为None的service,提供后端api接口：gateway-hs.syncplant-backend.svc.cluster.local:9000"
+  label: 是否为微服务的网关
+  type: boolean
+  group: "syncplant配置"
+- variable: syncplant.port
+  description: "k8s中微服务容器的端口"
+  label: 微服务容器端口号
+  type: int
+  required: true
+  group: "syncplant配置"
+- variable: syncplant.javaOpts
+  description: "k8s中微服务启动自定义jvm参数"
+  label: jvm参数
+  type: string
+  group: "syncplant配置"
+
+##创建configMap
+- variable: syncplant.configMap.autoCreate
+  default: false
+  description: "是否需要创建syncplant的公共configMap，如果已经创建则忽略"
+  label: 是否创建公共configMap
+  type: boolean
+  group: "syncplant配置"
+  show_subquestion_if: true
+  subquestions:
+    - variable: syncplant.configMap.env
+      default: "prod"
+      description: "syncplant微服务的环境变量，默认为生产环境prod"
+      type: string
+      label: 环境变量
+      required: true
+    - variable: syncplant.configMap.nacos.url
+      default: ""
+      description: "syncplant微服务的nacos地址"
+      type: string
+      label: nacos地址
+      required: true
+    - variable: syncplant.configMap.nacos.user
+      default: ""
+      description: "syncplant微服务的nacos账号"
+      type: string
+      label: nacos账号
+      required: true
+    - variable: syncplant.configMap.nacos.password
+      default: ""
+      description: "syncplant微服务的nacos密码"
+      type: string
+      label: nacos密码
+      required: true
+
+##是否启用skywalking
+- variable: syncplant.skywalking.enabled
+  default: false
+  description: "微服务是否需要启用skywalking监控"
+  label: 是否启用skywalking
+  type: boolean
+  group: "syncplant配置"
+  show_subquestion_if: true
+  subquestions:
+    - variable: syncplant.skywalking.backendServices
+      default: "skywalking-server.skywalking.svc.cluster.local:11800"
+      description: "skywalking-server的地址"
+      type: string
+      label: skywalking-server的地址
+      required: true
+    - variable: syncplant.skywalking.image.repository
+      default: "10.88.12.26:80/skywalking/skywalking-agent"
+      description: "skywalking-agent探针的镜像"
+      type: string
+      label: agent探针的镜像
+      required: true
+    - variable: syncplant.skywalking.image.tag
+      default: "8.14.0"
+      description: "agent探针的镜像tag"
+      type: string
+      label: agent探针的镜像tag
+      required: true
+    - variable: syncplant.skywalking.image.pullPolicy
+      default: "IfNotPresent"
+      description: "skywalking-agent探针镜像拉取策略"
+      type: string
+      label: 镜像拉取策略
+      options:
+        - "IfNotPresent"
+        - "Always"

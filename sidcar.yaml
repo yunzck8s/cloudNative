@@ -2,7 +2,7 @@ apiVersion: opentelemetry.io/v1alpha1
 kind: OpenTelemetryCollector
 metadata:
   name: otel
-  namespace: hotcommerce
+  namespace: syncplant-backend
 spec:
   mode: sidecar
   config: |
@@ -25,9 +25,20 @@ spec:
         endpoint: http://signoz-otel-collector.signoz:4317
         tls:
           insecure: true
+      otlphttp/victoriametrics:
+        compression: gzip
+        encoding: proto
+        endpoint: http://vmagent-vm-victoria-metrics-k8s-stack.prometheus.svc.cluster.local:8429/opentelemetry
+        tls:
+            insecure: true
     service:
       pipelines:
         traces:
           receivers: [otlp]
           processors: [batch]
           exporters: [otlp]
+        metrics:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [otlp,otlphttp/victoriametrics]
+
