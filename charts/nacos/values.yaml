@@ -3,23 +3,23 @@
 # Declare variables to be passed into your templates.
 
 global:
-  mode: cluster
+  mode: standalone
 #  mode: cluster
 
 ############################nacos###########################
 namespace: middle
 nacos:
   image:
-    repository: rzx.sciyon.com:11243/nacos/nacos-server
-    tag: 2.2.3
+    repository: nacos/nacos-server
+    tag: v2.2.3-slim
     pullPolicy: IfNotPresent
   plugin:
     enable: true
     image:
-      repository: rzx.sciyon.com:11243/bitnami/nacos-peer-finder-plugin
+      repository: zunshen/nacos-peer-finder-plugin
       tag: 1.1
       pullPolicy: IfNotPresent
-  replicaCount: 3
+  replicaCount: 1
   podManagementPolicy: Parallel
   domainName: cluster.local
   preferhostmode: hostname
@@ -30,7 +30,7 @@ nacos:
     #type: embedded
     type: mysql
     db:
-      host: mysql
+      host: mysql-primary
       name: nacos_config
       port: 3306
       username: root
@@ -42,7 +42,7 @@ persistence:
   data:
     accessModes:
       - ReadWriteOnce
-    storageClassName: ceph-block
+    storageClassName: openebs-hostpath
     resources:
       requests:
         storage: 5Gi

@@ -50,7 +50,7 @@ spec:
               subPath: peer-finder
       {{- end }}
       containers:
-        - name: {{ include "nacos.fullname" . }}
+        - name: {{ .Chart.Name }}
           image: "{{ .Values.nacos.image.repository }}:{{ .Values.nacos.image.tag }}"
           imagePullPolicy: {{ .Values.nacos.image.pullPolicy }}
           startupProbe:
@@ -162,20 +162,11 @@ spec:
             - name: data
               mountPath: /home/nacos/logs
               subPath: logs
-            - name: application
-              mountPath: /home/nacos/conf/application.properties
-              subPath: application.properties
       {{- if not .Values.persistence.enabled  }}
       volumes:
         - name: data
           emptyDir: { }
   {{- end }}
-      volumes:
-        - name: data
-          emptyDir: { }
-        - name: application
-          configMap:
-            name: nacos-application
   {{- if .Values.persistence.enabled }}
   volumeClaimTemplates:
     - metadata:

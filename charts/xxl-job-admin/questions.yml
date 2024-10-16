@@ -1,0 +1,120 @@
+labels:
+  io.cattle.role: project # options are cluster/project
+categories:
+- syncplant
+questions:
+- variable: nameOverride
+  description: ""
+  label: 分布式定时任务名称
+  type: string
+  required: true
+  group: "通用参数配置"
+- variable: replicaCount
+  default: 1
+  description: "xxl-job-admin实例数量"
+  label: xxl-job-admin pod数量
+  type: int
+  group: "通用参数配置"
+- variable: defaultImage
+  default: true
+  description: "使用默认的xxl-job镜像"
+  label: 使用默认镜像
+  type: boolean
+  group: "通用参数配置"
+  show_subquestion_if: false
+  subquestions:
+    - variable: image.repository
+      default: "10.88.12.26:80/xxl-job/xxl-job-admin"
+      description: "xxl-job-admin镜像"
+      type: string
+      label: xxl-job-admin镜像
+      required: true
+    - variable: image.tag
+      default: "2.2.0-20220721"
+      description: "镜像Tag"
+      type: string
+      label: 镜像Tag
+      required: true
+    - variable: image.pullPolicy
+      default: "IfNotPresent"
+      description: "镜像拉取策略"
+      type: enum
+      label: 镜像拉取策略
+      options:
+        - "IfNotPresent"
+        - "Always"
+- variable: service.content.type
+  default: "NodePort"
+  description: "前端服务类型，NodePort或者ClusterIP"
+  type: enum
+  label: 前端服务类型
+  options:
+    - "ClusterIP"
+    - "NodePort"
+  group: "通用参数配置"
+  show_subquestion_if: "NodePort"
+  subquestions:
+    - variable: service.content.nodePort
+      default: 30088
+      description: "前端服务NodePort端口号"
+      type: int
+      required: true
+      label: NodePort端口号
+
+##xxl-job数据源
+- variable: xxl.springDatasourceHost
+  description: "mysql数据库host"
+  label: 数据库host
+  type: string
+  group: "xxl-job数据源"
+- variable: xxl.springDatasourcePort
+  description: "mysql数据库端口"
+  label: 数据库端口
+  type: int
+  group: "xxl-job数据源"
+- variable: xxl.springDatasourceDbname
+  description: "mysql数据库名称"
+  label: 数据库名称
+  type: string
+  group: "xxl-job数据源"
+- variable: xxl.springDatasourceUsername
+  description: "mysql数据库账号"
+  label: 数据库账号
+  type: string
+  group: "xxl-job数据源"
+- variable: xxl.springDatasourcePassword
+  description: "mysql数据库密码"
+  label: 数据库密码
+  type: string
+  group: "xxl-job数据源"
+- variable: xxl.springDatasourceDbparam
+  description: "mysql数据源连接驱动参数"
+  default: "characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai"
+  label: 数据源连接驱动参数
+  type: string
+  group: "xxl-job数据源"
+
+- variable: xxl.jvmXms
+  description: "初始堆内存大小"
+  default: "512m"
+  label: 初始堆内存
+  type: string
+  group: "xxl-job应用jvm参数"
+- variable: xxl.jvmXmx
+  description: "最大堆内存大小"
+  default: "1g"
+  label: 堆内存最大值
+  type: string
+  group: "xxl-job应用jvm参数"
+- variable: xxl.jvmXmn
+  description: "年轻代大小"
+  default: "512m"
+  label: 年轻代大小
+  type: string
+  group: "xxl-job应用jvm参数"
+- variable: xxl.jvmMms
+  description: "元空间内存最大值"
+  default: "320m"
+  label: 元空间最大值
+  type: string
+  group: "xxl-job应用jvm参数"
