@@ -138,7 +138,7 @@ clickhouse:
     # -- Clickhouse image tag to use (example: `21.8`).
     # SigNoz is not always tested with latest version of ClickHouse.
     # Only if you know what you are doing, proceed with overriding.
-    tag: 23.3.9.55-alpine
+    tag: 24.1.2-alpine
     # -- Clickhouse image pull policy.
     pullPolicy: IfNotPresent
 
@@ -1318,7 +1318,7 @@ schemaMigrator:
       image:
         registry: docker.io
         repository: clickhouse/clickhouse-server
-        tag: 23.3.9.55-alpine
+        tag: 24.1.2-alpine
         pullPolicy: IfNotPresent
       command:
         - "sh"

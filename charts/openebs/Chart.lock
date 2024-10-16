@@ -1,0 +1,18 @@
+dependencies:
+- name: openebs-crds
+  repository: ""
+  version: 4.1.1
+- name: localpv-provisioner
+  repository: https://openebs.github.io/dynamic-localpv-provisioner
+  version: 4.1.1
+- name: zfs-localpv
+  repository: https://openebs.github.io/zfs-localpv
+  version: 2.6.2
+- name: lvm-localpv
+  repository: https://openebs.github.io/lvm-localpv
+  version: 1.6.2
+- name: mayastor
+  repository: https://openebs.github.io/mayastor-extensions
+  version: 2.7.1
+digest: sha256:43984d146e778ce1446dd5e06105ee4f06f5477457e033cd0852063d074219a4
+generated: "2024-09-25T12:58:55.321531255Z"
