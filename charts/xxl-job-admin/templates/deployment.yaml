@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "xxl-job-admin.fullname" . }}
+  labels:
+    {{- include "xxl-job-admin.labels" . | nindent 4 }}
+  namespace: {{ .Release.Namespace }}
+spec:
+{{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "xxl-job-admin.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "xxl-job-admin.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- if not (empty .Values.imagePullSecrets) }}
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecrets }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+          env:
+            - name: TZ
+              value: Asia/Shanghai
+            - name: JVM_XMS
+              value: "{{ .Values.xxl.jvmXms }}"
+            - name: JVM_XMX
+              value: "{{ .Values.xxl.jvmXmx }}"
+            - name: JVM_XMN
+              value: "{{ .Values.xxl.jvmXmn }}"
+            - name: JVM_MS
+              value: "{{ .Values.xxl.jvmMs }}"
+            - name: JVM_MMS
+              value: "{{ .Values.xxl.jvmMms }}"
+            - name: SERVER_SERVLET_CONTEXTPATH
+              value: "{{ .Values.xxl.serverServletContextpath }}"
+            - name: SERVER_PORT
+              value: "{{ .Values.xxl.serverPort }}"
+            - name: SPRING_DATASOURCE_HOST
+              value: "{{ .Values.xxl.springDatasourceHost }}"
+            - name: SPRING_DATASOURCE_PORT
+              value: "{{ .Values.xxl.springDatasourcePort }}"
+            - name: SPRING_DATASOURCE_DB_NAME
+              value: "{{ .Values.xxl.springDatasourceDbname }}"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "{{ .Values.xxl.springDatasourceUsername }}"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "{{ .Values.xxl.springDatasourcePassword }}"
+            - name: SPRING_DATASOURCE_DB_PARAM
+              value: "{{ .Values.xxl.springDatasourceDbparam }}"
+          {{- if not .Values.healthChk.enabled }}
+          {{- with .Values.healthChk.content }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- end }}
+

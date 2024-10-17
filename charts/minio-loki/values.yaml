@@ -17,7 +17,7 @@ global:
   ##   - myRegistryKeySecretName
   ##
   imagePullSecrets: []
-  storageClass: "ceph-block"
+  storageClass: "openebs-hostpath"
   ## Compatibility adaptations for Kubernetes platforms
   ##
   compatibility:

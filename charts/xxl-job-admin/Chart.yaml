@@ -1,0 +1,13 @@
+apiVersion: v2
+# chart版本
+appVersion: 2.2.0-20220721
+name: xxl-job-admin
+description: xxl-job-admin是分布式定时任务的helm部署脚本。
+#type: application
+# release 版本
+version: 1.0.8
+icon: https://www.xuxueli.com/doc/static/xxl-job/images/xxl-logo.jpg
+# 维护者信息
+maintainers:
+  - email: wangc@sciyon.com
+    name: wangc

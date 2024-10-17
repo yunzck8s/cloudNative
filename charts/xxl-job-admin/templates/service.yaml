@@ -1,0 +1,20 @@
+{{- if .Values.service.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "xxl-job-admin.fullname" . }}
+  labels:
+    {{- include "xxl-job-admin.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.content.type }}
+  ports:
+    - port: {{ .Values.service.content.port }}
+      targetPort: {{ .Values.service.content.targetPort }}
+      {{- if eq .Values.service.content.type "NodePort" }}
+      nodePort: {{ .Values.service.content.nodePort }}
+      {{- end }}
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ include "xxl-job-admin.fullname" . }}
+{{- end -}}
