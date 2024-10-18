@@ -5,9 +5,9 @@
 replicaCount: 1
 
 image:
-  repository: rzx.sciyon.com:11243/arm/xxl-job-admin
+  repository: xuxueli/xxl-job-admin
   pullPolicy: IfNotPresent
-  tag: 2.2.0-20230203
+  tag: 2.2.0
 
 #镜像拉取secret
 imagePullSecrets:
