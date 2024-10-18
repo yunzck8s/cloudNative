@@ -1,0 +1,76 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  namespace: vms
+  creationTimestamp: null
+  labels:
+    kubevirt.io/vm: vm-cirros-datavolume
+  name: centos
+spec:
+  dataVolumeTemplates:
+  - metadata:
+      creationTimestamp: null
+      name: cirros-dv
+    spec:
+      pvc:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10G
+        storageClassName: openebs-hostpath
+      source:
+        http:
+          url: https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2009.qcow2c.xz
+  - metadata:
+      creationTimestamp: null
+      name: abc
+    spec:
+      pvc:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 50G
+        storageClassName: openebs-hostpath
+      source:
+        blank: {}
+  running: false
+  template:
+    metadata:
+      labels:
+        kubevirt.io/vm: vm-datavolume
+    spec:
+      domain:
+        devices:
+          disks:
+          - bootOrder: 1
+            disk:
+              bus: virtio
+            name: datavolumevolume
+          - disk:
+              bus: virtio
+            name: abc
+        machine:
+          type: q35
+        resources:
+          limits:
+            cpu: 1
+            memory: 4Gi
+          requests:
+            cpu: 500m
+            memory: 1Gi
+      terminationGracePeriodSeconds: 0
+      volumes:
+      - dataVolume:
+          name: cirros-dv
+        name: datavolumevolume
+      - dataVolume:
+          name: abc
+        name: abc
+      - cloudInitNoCloud:
+          userData: |
+            #cloud-config
+            hostname: centos
+            password: 000000
+            chpasswd: { expire: False }
