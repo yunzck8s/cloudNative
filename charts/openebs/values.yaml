@@ -61,4 +61,4 @@ engines:
       enabled: true
   replicated:
     mayastor:
-      enabled: true
+      enabled: false
