@@ -1,0 +1,67 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  creationTimestamp: null
+  labels:
+    kubevirt.io/vm: vm-cirros-datavolume
+  name: windows
+  namespace: vms
+spec:
+  dataVolumeTemplates:
+  - metadata:
+      name: windows-pvc
+    spec:
+      pvc:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 50G
+        storageClassName: openebs-hostpath
+      source:
+        blank: {}
+  running: false
+  preference:
+    kind: VirtualMachinePreference
+    name: windows
+  template:
+    metadata:
+      labels:
+        kubevirt.io/vm: vm-datavolume
+    spec:
+      domain:
+        cpu:
+          cores: 8
+        devices:
+          disks:
+          - bootOrder: 1
+            cdrom:
+              bus: sata
+            name: pvcdisk
+          - disk:
+              bus: virtio
+            name: windows-pvc
+          - cdrom:
+              bus: sata
+            name: virtiocontainerdisk
+        machine:
+          type: q35
+        firmware:
+          uuid: 5d307ca9-b3ef-428c-8861-06e72d69f223
+        resources:
+        #   limits:
+        #     cpu: 4
+        #     memory: 8Gi
+          requests:
+            memory: 16Gi
+      terminationGracePeriodSeconds: 0
+      volumes:
+      - containerDisk:
+          image: quay.io/kubevirt/virtio-container-disk
+        name: virtiocontainerdisk
+      - name: pvcdisk
+        persistentVolumeClaim:
+          claimName: win2k16
+      - dataVolume:
+          name: windows-pvc
+        name: windows-pvc

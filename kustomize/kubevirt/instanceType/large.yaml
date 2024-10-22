@@ -1,0 +1,10 @@
+apiVersion: instancetype.kubevirt.io/v1beta1
+kind: VirtualMachineInstancetype
+metadata:
+  name: large
+  namespace: vms
+spec:
+  cpu:
+    guest: 8
+  memory:
+    guest: 16Gi

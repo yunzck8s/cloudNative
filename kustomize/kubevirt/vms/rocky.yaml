@@ -1,0 +1,82 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  creationTimestamp: null
+  labels:
+    kubevirt.io/vm: vm-cirros-datavolume
+  name: rocky
+  namespace: vms
+spec:
+  dataVolumeTemplates:
+  - metadata:
+      name: centos-dv
+    spec:
+      pvc:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10G
+        storageClassName: openebs-hostpath
+      source:
+        http:
+          url: https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2.xz
+  - metadata:
+      name: rocky-disk
+    spec:
+      pvc:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 50G
+        storageClassName: openebs-hostpath
+      source:
+        blank: {}
+  running: false
+  instancetype:
+    kind: VirtualMachineInstancetype
+    name: large
+  template:
+    metadata:
+      labels:
+        kubevirt.io/vm: vm-datavolume
+    spec:
+      domain:
+        devices:
+          disks:
+          - name: virtiocontainerdisk
+            cdrom:
+              bus: sata
+          - disk:
+              bus: virtio
+            name: rocky-disk
+          - disk:
+              bus: virtio
+            name: cloudinitdisk
+        machine:
+          type: q35
+        # resources:
+        #   limits:
+        #     cpu: 4
+        #     memory: 8Gi
+        #   requests:
+        #     cpu: 500m
+        #     memory: 1Gi
+      terminationGracePeriodSeconds: 0
+      volumes:
+      - containerDisk:
+          image: quay.io/kubevirt/virtio-container-disk
+        name: virtiocontainerdisk
+      - dataVolume:
+          name: rocky-disk
+        name: rocky-disk
+      - cloudInitNoCloud:
+          userData: |
+            #cloud-config
+            hostname: vm1
+            ssh_pwauth: True
+            disable_root: false
+            ssh_authorized_keys:
+            - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDhho7EHlU6vg0RY4+dMkOASO9qdlKIz1R6o1Eq4jelkoJ+KjzAYWE6ybRccEVJ77kx8f4iZrTN2buXaQKbRuYw/9tm0j62LYIjOXcLWRFpRzLsLHCg6n/Lq21JlE87njCppl/MW/VnTS3FItFlMQ21m95Noq1sVhBd3C96ya0FZjs+MXn/kqffS/d+3hlaoqYNBYVvG65qhOgl+oct3gQkJib+oIpqCH/fEtMRoC4DaEs4cPc8cpV/9s0KBc9oOzJTgRWMFw5KcLV/4HRlSHz99k369idjRgRyS5nh7k2t9qbMdiG7FYy9gTk0HxBZYdbo8q6kmV2ToZ/AESXA4K8BdtMGuNSzdtq3vK8yFTFM5KYC9M7lKcFJc5FBOlt3k31rfxehSrGUJ6pJ6N/PBKn0Bj4574/xLNvvdoGlT64wuMx2yMELxPcj73yIIuBpJQT3f+IA0N37fo7/TRNcgSDncAt62ouSZaRhFq8NKvMamW74FIKkKxKgBtKoXuhyAUM= wangxl@DESKTOP-2V0250D
+        name: cloudinitdisk
