@@ -7,8 +7,12 @@ metadata:
 spec:
   certificateRotateStrategy: {}
   configuration:
+    vmRolloutStrategy: "LiveUpdate"
     developerConfiguration:
-      featureGates: []
+      featureGates:
+        - VMLiveUpdateFeatures
   customizeComponents: {}
   imagePullPolicy: IfNotPresent
-  workloadUpdateStrategy: {}
+  workloadUpdateStrategy:
+    workloadUpdateMethods:
+    - LiveMigrate
