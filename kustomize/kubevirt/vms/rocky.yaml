@@ -9,19 +9,6 @@ metadata:
 spec:
   dataVolumeTemplates:
   - metadata:
-      name: centos-dv
-    spec:
-      pvc:
-        accessModes:
-        - ReadWriteOnce
-        resources:
-          requests:
-            storage: 10G
-        storageClassName: openebs-hostpath
-      source:
-        http:
-          url: https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2.xz
-  - metadata:
       name: rocky-disk
     spec:
       pvc:
@@ -45,9 +32,9 @@ spec:
       domain:
         devices:
           disks:
-          - name: virtiocontainerdisk
-            cdrom:
-              bus: sata
+          - disk:
+              bus: virtio
+            name: pvcdisk
           - disk:
               bus: virtio
             name: rocky-disk
@@ -65,9 +52,9 @@ spec:
         #     memory: 1Gi
       terminationGracePeriodSeconds: 0
       volumes:
-      - containerDisk:
-          image: quay.io/kubevirt/virtio-container-disk
-        name: virtiocontainerdisk
+      - name: pvcdisk
+        persistentVolumeClaim:
+          claimName: rocky
       - dataVolume:
           name: rocky-disk
         name: rocky-disk

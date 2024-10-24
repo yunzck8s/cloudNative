@@ -257,7 +257,7 @@ externalVM:
 # Configures vmsingle params
 vmsingle:
   annotations: {}
-  enabled: true
+  enabled: false
   # -- full spec for VMSingle CRD. Allowed values describe [here](https://docs.victoriametrics.com/operator/api#vmsinglespec)
   spec:
     port: "8429"
@@ -1020,7 +1020,7 @@ kubeApiServer:
 
 # Component scraping the kube controller manager
 kubeControllerManager:
-  enabled: true
+  enabled: false
 
   ## If your kube controller manager is not deployed as a pod, specify IPs it can be found on
   ##
@@ -1107,7 +1107,7 @@ coreDns:
 
 # Component scraping etcd
 kubeEtcd:
-  enabled: true
+  enabled: false
 
   ## If your etcd is not deployed as a pod, specify IPs it can be found on
   ##
@@ -1143,7 +1143,7 @@ kubeEtcd:
 
 # Component scraping kube scheduler
 kubeScheduler:
-  enabled: true
+  enabled: false
 
   ## If your kube scheduler is not deployed as a pod, specify IPs it can be found on
   ##
