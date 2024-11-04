@@ -37,6 +37,10 @@ spec:
           receivers: [otlp]
           processors: [batch]
           exporters: [otlp]
+        logs:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [otlp]
         metrics:
           receivers: [otlp]
           processors: [batch]

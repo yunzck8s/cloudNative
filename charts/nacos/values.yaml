@@ -11,15 +11,15 @@ namespace: middle
 nacos:
   image:
     repository: nacos/nacos-server
-    tag: v2.2.3-slim
+    tag: v2.4.3-slim
     pullPolicy: IfNotPresent
   plugin:
     enable: true
     image:
-      repository: zunshen/nacos-peer-finder-plugin
+      repository: nacos/nacos-peer-finder-plugin
       tag: 1.1
       pullPolicy: IfNotPresent
-  replicaCount: 1
+  replicaCount: 3
   podManagementPolicy: Parallel
   domainName: cluster.local
   preferhostmode: hostname
