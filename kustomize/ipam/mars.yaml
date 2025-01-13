@@ -1,0 +1,19 @@
+apiVersion: cilium.io/v2alpha1
+kind: CiliumPodIPPool
+metadata:
+  name: mysql-pool
+spec:
+  ipv4:
+    cidrs:
+    - 10.0.0.100/30
+    maskSize: 30
+---
+apiVersion: cilium.io/v2alpha1
+kind: CiliumPodIPPool
+metadata:
+  name: redis-pool
+spec:
+  ipv4:
+    cidrs:
+    - 10.0.1.248/29
+    maskSize: 29

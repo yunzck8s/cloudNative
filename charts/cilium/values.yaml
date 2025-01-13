@@ -40,7 +40,7 @@ imagePullSecrets: []
 # @default -- `"~/.kube/config"`
 kubeConfigPath: ""
 # -- (string) Kubernetes service host - use "auto" for automatic lookup from the cluster-info ConfigMap (kubeadm-based clusters only)
-k8sServiceHost: "192.168.1.15"
+k8sServiceHost: "192.168.1.81"
 # @schema
 # type: [string, integer]
 # @schema
@@ -513,7 +513,7 @@ bpf:
   # @schema
   # -- (bool) Enable native IP masquerade support in eBPF
   # @default -- `false`
-  masquerade: true
+  masquerade: false
   # @schema
   # type: [null, boolean]
   # @schema
@@ -536,7 +536,7 @@ bpf:
   # -- (list) Configure explicitly allowed VLAN id's for bpf logic bypass.
   # [0] will allow all VLAN id's without any filtering.
   # @default -- `[]`
-  vlanBypass: ~
+  vlanBypass: [0]
   # -- (bool) Disable ExternalIP mitigation (CVE-2020-8554)
   # @default -- `false`
   disableExternalIPMitigation: false
@@ -1744,7 +1744,7 @@ installNoConntrackIptablesRules: false
 ipam:
   # -- Configure IP Address Management mode.
   # ref: https://docs.cilium.io/en/stable/network/concepts/ipam/
-  mode: "multi-pool"
+  mode: "cluster-pool"
   # -- Maximum rate at which the CiliumNode custom resource is updated.
   ciliumNodeUpdateRate: "15s"
   operator:
@@ -1763,12 +1763,22 @@ ipam:
     # -- IPv6 CIDR mask size to delegate to individual nodes for IPAM.
     clusterPoolIPv6MaskSize: 120
     # -- IP pools to auto-create in multi-pool IPAM mode.
-    autoCreateCiliumPodIPPools: 
-      default:
-        ipv4:
-          cidrs:
-            - 10.244.0.0/16
-          maskSize: 27
+    # autoCreateCiliumPodIPPools: 
+    #   default:
+    #     ipv4:
+    #       cidrs:
+    #         - 10.244.0.0/16
+    #       maskSize: 27
+      # mysql:
+      #   ipv4:
+      #     cidrs:
+      #       - 10.0.0.100/30
+      #     maskSize: 30
+      # redis:
+      #   ipv4:
+      #     cidrs:
+      #       - 10.0.1.248/29
+      #     maskSize: 29
     #   other:
     #     ipv6:
     #       cidrs:
@@ -1881,9 +1891,9 @@ maglev: {}
 # hashSeed:
 
 # -- Enables masquerading of IPv4 traffic leaving the node from endpoints.
-enableIPv4Masquerade: true
+enableIPv4Masquerade: false
 # -- Enables masquerading of IPv6 traffic leaving the node from endpoints.
-enableIPv6Masquerade: true
+enableIPv6Masquerade: false
 # -- Enables masquerading to the source of the route for traffic leaving the node from endpoints.
 enableMasqueradeRouteSource: false
 # -- Enables IPv4 BIG TCP support which increases maximum IPv4 GSO/GRO limits for nodes and pods

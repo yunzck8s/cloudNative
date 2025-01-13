@@ -1,0 +1,10 @@
+apiVersion: spiderpool.spidernet.io/v2beta1
+kind: SpiderIPPool
+metadata:
+  name: 192-168-1-v4
+spec:
+  disable: false
+  gateway: 192.168.1.1
+  ips:
+  - 192.168.1.200-192.168.1.240
+  subnet: 192.168.1.0/24

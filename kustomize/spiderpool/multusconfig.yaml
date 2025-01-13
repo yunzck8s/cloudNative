@@ -1,0 +1,13 @@
+apiVersion: spiderpool.spidernet.io/v2beta1
+kind: SpiderMultusConfig
+metadata:
+  name: macvlan-ens34
+spec:
+  cniType: macvlan
+  macvlan:
+    master:
+    - ens34
+    ippools:
+      ipv4:
+      - 192-168-1-v4
+    vlanID: 0

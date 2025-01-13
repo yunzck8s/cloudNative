@@ -35,7 +35,7 @@ clusterName: ""
 # 
 # If set to null and the chart is installed as dependency, it will attempt
 # to autogenerate the endpoint of SigNoz OtelCollector.
-otelCollectorEndpoint: signoz-otel-collector.signoz:4317
+otelCollectorEndpoint: signoz-otel-collector.platform:4317
 
 # -- Whether the OTLP endpoint is insecure.
 # Set this to false, in case of secure OTLP endpoint.
