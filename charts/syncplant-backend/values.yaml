@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 image:
-  tag: 1.4.19.11
+  tag: 1.4.23.9
 
 port: 8080
 
@@ -34,7 +34,11 @@ backend:
       repository: rzx.sciyon.com:11243/syncplant/syncplant-frame-gateway
       tag: 
 
-
+  syncplant-business-bd:
+    replicaCount: 1
+    image: 
+      repository: rzx.sciyon.com:11243/bd/syncplant-business-bd
+      tag: 2.0.0.9
 
 nameOverride: ""
 
@@ -58,7 +62,7 @@ syncplant:
     autoCreate: true
     env: prod
     nacos:
-      url: nacos-0.nacos-hs.middle.svc.cluster.local:8848,nacos-1.nacos-hs.middle.svc.cluster.local:8848,nacos-2.nacos-hs.middle.svc.cluster.local:8848
+      url: nacos-0.nacos-cs.middle.svc.cluster.local:8848
       user: nacos
       password: nacos
       service: 
